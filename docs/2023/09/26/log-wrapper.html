@@ -1,0 +1,174 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Log Wrapper</title>
+  </head>
+  <body>
+    <nav>
+  
+    <a href="/" >
+      Home
+    </a>
+  
+    <a href="/about.html" >
+      About
+    </a>
+  
+    <a href="/blog.html" >
+      Blog
+    </a>
+  
+</nav>
+    <h1>Log Wrapper</h1>
+<p>26 Sep 2023 - awest</p>
+
+<h1 id="log-wrapper">Log wrapper</h1>
+
+<p>You may have heard advice discouraging the inclusion of print statements in
+functions that already do something else. It recalls the precept that pure code
+should live apart from code that has side-effects; Haskell, for example,
+enforces the segregation using its type system. Such rules are examples of the
+more fundamental principle of <a href="separation_of_concerns.md">separation of
+concerns</a>, and in this article we show, in Rust, how
+it can ease the control of logging.</p>
+
+<p>Suppose we have a class <code class="language-plaintext highlighter-rouge">C</code> of objects (<em>ie</em>, a <code class="language-plaintext highlighter-rouge">struct</code>) containing some
+method <code class="language-plaintext highlighter-rouge">f</code>.  Client code might then look like this:</p>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fn</span> <span class="nf">some_function</span><span class="p">(</span><span class="n">c</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">C</span><span class="p">)</span> <span class="p">{</span>
+    <span class="cm">/* ... */</span>
+    <span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="n">c</span><span class="nf">.f</span><span class="p">();</span>
+    <span class="cm">/* ... */</span>
+<span class="p">}</span>
+
+<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="cm">/* ... initialize logger ... */</span>
+    <span class="k">let</span> <span class="n">c</span> <span class="o">=</span> <span class="o">...</span><span class="p">;</span> <span class="c1">// instantiate a C</span>
+    <span class="nf">some_function</span><span class="p">(</span><span class="o">&amp;</span><span class="n">c</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>The next day we decide that we need to observe <code class="language-plaintext highlighter-rouge">f</code>’s execution. So we add a log
+statement at the beginning of <code class="language-plaintext highlighter-rouge">f</code>, to trace the moment of invocation, and we
+add another at the end of <code class="language-plaintext highlighter-rouge">f</code>, to observe the result:</p>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">impl</span> <span class="n">C</span> <span class="p">{</span>
+    <span class="k">fn</span> <span class="nf">f</span><span class="p">(</span><span class="o">&amp;</span><span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">i32</span> <span class="p">{</span>
+        <span class="nd">trace!</span><span class="p">(</span><span class="s">"About to run C.f()"</span><span class="p">);</span>
+        <span class="cm">/*
+           ...
+           f's original code
+           ...
+        */</span>
+        <span class="k">let</span> <span class="n">result</span> <span class="o">=</span> <span class="o">...</span><span class="p">;</span>
+        <span class="nd">info!</span><span class="p">(</span><span class="s">"Result of running C.f(): {}"</span><span class="p">,</span> <span class="n">result</span><span class="p">);</span>
+        <span class="n">result</span>
+    <span class="p">}</span>
+
+    <span class="cm">/*
+    ... other methods
+    */</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The day after, however, we decide that we no longer need the log statements and
+wish to go back to the original version of <code class="language-plaintext highlighter-rouge">f</code>. This of course means modifying
+<code class="language-plaintext highlighter-rouge">f</code> again, and you now see the problem: it is quite possible that we will need
+the log statements again…and then not…and then back again…and so on, so
+that each change would mean re-writing or re-deleting.</p>
+
+<p>Not a productive use of our time.</p>
+
+<p>(Popular logging libraries for Rust can restrict log statements by <em>target</em>,
+allowing us to turn some of them on or off at run time, <em>eg</em>, by environment
+variables. But this solution keeps the log statements in the compiled code, and
+that might not be acceptable if there are limits on the executable’s size.)</p>
+
+<p>Enter separation of concerns. As typically happens, it can be achieved here by
+introducing some abstractions, as follows. Indeed the need for more abstraction
+might have already occurred to you on seeing that the signature of
+<code class="language-plaintext highlighter-rouge">some_function</code> grants it access to all of <code class="language-plaintext highlighter-rouge">C</code>’s methods, even though only <code class="language-plaintext highlighter-rouge">f</code>
+is used.</p>
+
+<p>The first stage of refactoring, then, is to make <code class="language-plaintext highlighter-rouge">f</code> the lone method of a new
+trait <code class="language-plaintext highlighter-rouge">F</code> (<em>traits</em> are Rust’s way of ad hoc polymorphism; they correspond to
+type classes in Haskell and, more or less, interfaces in Java):</p>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">trait</span> <span class="n">F</span> <span class="p">{</span>
+    <span class="k">fn</span> <span class="nf">f</span><span class="p">(</span><span class="o">&amp;</span><span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">i32</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>This allows us wisely to genericize <code class="language-plaintext highlighter-rouge">some_function</code>:</p>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fn</span> <span class="n">some_function</span><span class="o">&lt;</span><span class="n">T</span><span class="p">:</span> <span class="n">F</span><span class="o">&gt;</span><span class="p">(</span><span class="n">t</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">T</span><span class="p">)</span> <span class="p">{</span>
+    <span class="cm">/* ... */</span>
+    <span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="n">t</span><span class="nf">.f</span><span class="p">();</span>
+    <span class="cm">/* ... */</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>Meanwhile <code class="language-plaintext highlighter-rouge">main</code> needs no change, and by passing a <code class="language-plaintext highlighter-rouge">C</code> as the <code class="language-plaintext highlighter-rouge">F</code> that
+<code class="language-plaintext highlighter-rouge">some_function</code> expects, it performs a kind of <em>dependency injection</em>—another
+kind of separation of concerns, one of whose benefits is touched on below.</p>
+
+<p>The second stage of refactoring is of course to get <code class="language-plaintext highlighter-rouge">C</code> to implement <code class="language-plaintext highlighter-rouge">F</code>:</p>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">impl</span> <span class="n">F</span> <span class="k">for</span> <span class="n">C</span> <span class="p">{</span>
+    <span class="k">fn</span> <span class="nf">f</span><span class="p">(</span><span class="o">&amp;</span><span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">i32</span> <span class="p">{</span>
+        <span class="c1">// No log statements in this method!</span>
+        <span class="cm">/*
+           ...
+           f's original code
+           ...
+        */</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">impl</span> <span class="n">C</span> <span class="p">{</span>
+    <span class="cm">/*
+    ... other methods, as before
+    */</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>And the third stage is to introduce a generic wrapper type:</p>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">struct</span> <span class="n">Logging</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">T</span><span class="p">);</span>
+</code></pre></div></div>
+<p>It is where we move the log statements to:</p>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">impl</span><span class="o">&lt;</span><span class="n">T</span><span class="p">:</span> <span class="n">F</span><span class="o">&gt;</span> <span class="n">F</span> <span class="k">for</span> <span class="n">Logging</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">fn</span> <span class="nf">f</span><span class="p">(</span><span class="o">&amp;</span><span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">i32</span> <span class="p">{</span>
+        <span class="nd">trace!</span><span class="p">(</span><span class="s">"About to run F.f()"</span><span class="p">);</span> <span class="c1">// "C.f()" is now "F.f()"</span>
+        <span class="k">let</span> <span class="n">result</span> <span class="o">=</span> <span class="k">self</span><span class="na">.0</span><span class="nf">.f</span><span class="p">();</span>
+        <span class="nd">info!</span><span class="p">(</span><span class="s">"Result of running F.f(): {}"</span><span class="p">,</span> <span class="n">result</span><span class="p">);</span> <span class="c1">// ditto</span>
+        <span class="n">result</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>Now at last we are able to turn logging on or off, by adding or subtracting one
+little line in <code class="language-plaintext highlighter-rouge">main</code>:</p>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="cm">/* ... initialize logger ... */</span>
+    <span class="k">let</span> <span class="n">c</span> <span class="o">=</span> <span class="o">...</span><span class="p">;</span> <span class="c1">// instantiate a C</span>
+    <span class="k">let</span> <span class="n">c</span> <span class="o">=</span> <span class="nf">Logging</span><span class="p">(</span><span class="n">c</span><span class="p">);</span> <span class="c1">// one new line (c shadowed only for convenience)</span>
+    <span class="nf">some_function</span><span class="p">(</span><span class="o">&amp;</span><span class="n">c</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>This is trivial next to the chore we faced at the outset, of re-adding and
+re-deleting log statements.</p>
+
+<p>Mission accomplished.</p>
+
+<p>Moreover when we need to change <code class="language-plaintext highlighter-rouge">f</code>’s implementation details, we do so in the
+<code class="language-plaintext highlighter-rouge">impl F for C</code>, whereas when we need to change the log statements, we do so in
+the <code class="language-plaintext highlighter-rouge">impl&lt;T: F&gt; F for Logging&lt;T&gt;</code>. Modifying the one <code class="language-plaintext highlighter-rouge">impl</code> spares us the
+distraction of, and the risk of accidentally breaking, the other. And because
+dependency injection has now made <code class="language-plaintext highlighter-rouge">some_function</code> indifferent to such changes,
+they force no recompilation of it (though in Rust that might really mean <em>less</em>
+recompilation; see <a href="https://stackoverflow.com/a/44349724">here</a> for example).</p>
+
+<p>The code has thus become not only easier with respect to logging, but also
+easier to reason about, safer to modify, and so more likely to run right. The
+benefits may seem modest here, but in more intricate scenarios, or when
+reapplied across a large codebase, the technique can spell salvation.</p>
+
+<p>Bear in mind however that every rule has its exceptions. “Log-wrapping” is not
+always suitable, and separating concerns is not always advisable. Decide each
+case by good common sense.</p>
+
+<p>I hope this helps…and happy coding!</p>
+
+  </body>
+</html>
