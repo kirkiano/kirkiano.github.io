@@ -99,7 +99,7 @@ input, select, textarea {
 	}
 
 	body {
-		background: #ffffff;
+		background: #131313 /* #ffffff*/;
 	}
 
 		body.is-preload *, body.is-preload *:before, body.is-preload *:after {
@@ -152,8 +152,8 @@ input, select, textarea {
 		}
 
 	body {
-		background-color: #ffffff;
-		color: #000000;
+		background-color: #131313 /* #ffffff */;
+		color: #ffffff /*#000000*/;
 	}
 
 	body, input, select, textarea {
@@ -321,7 +321,7 @@ input, select, textarea {
 	}
 
 	a {
-		color: #000000;
+		color: #4061c4/* #000000*/ ;
 	}
 
 		a:hover {
@@ -329,11 +329,11 @@ input, select, textarea {
 		}
 
 	strong, b {
-		color: #000000;
+		color: #ffffff /*#000000*/;
 	}
 
 	h1, h2, h3, h4, h5, h6 {
-		color: #000000;
+		color: #ffffff /*#000000*/;
 	}
 
 	blockquote {
@@ -2188,8 +2188,8 @@ input, select, textarea {
 	button,
 	.button {
 		background-color: transparent;
-		box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
-		color: #000000 !important;
+		box-shadow: inset 0 0 0 1px #a0a0a0 /*rgba(0, 0, 0, 0.2)*/;
+		color: #ffffff /*#000000*/ !important;
 	}
 
 		input[type="submit"]:hover,
