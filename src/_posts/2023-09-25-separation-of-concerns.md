@@ -3,7 +3,6 @@ layout: post
 author: awest
 title: Separation of concerns
 ---
-# Separation of concerns
 
 If we were pressed to boil software engineering down to one principle, or to
 identify the most important one of its best practices, we might well choose

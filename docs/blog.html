@@ -1,23 +1,33 @@
-<!doctype html>
+<!DOCTYPE HTML>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>Blog</title>
-  </head>
-  <body>
+	<head>
+		<title> - Blog</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<!-- See https://stackoverflow.com/a/28805427 regarding the importance of
+			    for proper layout inheritance. -->
+		<link rel="stylesheet" href="/assets/css/main.css" />
+		<noscript>
+			<link rel="stylesheet" href="/assets/css/noscript.css" />
+		</noscript>
+	</head>
+	<body class="is-preload" style="margin: 1em;">
     <nav>
   
     <a href="/" >
       Home
     </a>
+    &nbsp;
   
     <a href="/about.html" >
       About
     </a>
+    &nbsp;
   
-    <a href="/blog.html" style="color: red;">
+    <a href="/blog.html" style="color: hotpink;">
       Blog
     </a>
+    &nbsp;
   
 </nav>
     <h1>Posts</h1>
@@ -26,18 +36,32 @@
   
     <li>
       <h2><a href="/2023/09/26/log-wrapper.html">Log Wrapper</a></h2>
-      <!-- <h1 id="log-wrapper">Log wrapper</h1>
+      <!-- <p>You may have heard advice discouraging the inclusion of print statements in
+functions that already do something else. It recalls the precept that pure code
+should live apart from code that has side-effects; Haskell, for example,
+enforces the segregation using its type system. Such rules are examples of the
+more fundamental principle of <a href="separation_of_concerns.md">separation of
+concerns</a>, and in this article we show, in Rust, how
+it can ease the control of logging.</p>
 
  -->
     </li>
   
     <li>
       <h2><a href="/2023/09/25/separation-of-concerns.html">Separation of concerns</a></h2>
-      <!-- <h1 id="separation-of-concerns">Separation of concerns</h1>
-
+      <!-- <p>If we were pressed to boil software engineering down to one principle, or to
+identify the most important one of its best practices, we might well choose
+<em>separation of concerns</em>. Its influence is seen at all levels of our craft,
+from the “highest,” as in the division of a back end into a distribution of
+single-purpose microservices, to the “lowest,” as in the splitting of an
+overlong function into smaller ones. The operation is always the same: some
+chunk of the system, sometimes a “confused” one, is broken down into pieces
+that are then logically <em>composed</em>. And because these components are now
+independent, they have become easier to test, easier to reason about, and
+easier to improve.</p>
  -->
     </li>
   
 </ul>
-  </body>
+	</body>
 </html>

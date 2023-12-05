@@ -169,7 +169,7 @@ input, select, textarea {
 		-webkit-transition: color 0.2s ease-in-out;
 		-ms-transition: color 0.2s ease-in-out;
 		transition: color 0.2s ease-in-out;
-		text-decoration: underline;
+		text-decoration: none /*underline*/;
 	}
 
 		a:hover {
@@ -8603,3 +8603,13 @@ input, select, textarea {
 			#wrapper.divided > .invert:first-child {
 				box-shadow: none !important;
 			}
+
+
+/* TODO: refactor sass/css into modules */
+.post-body {
+	background-color: #131313;
+	color: #ffffff;
+	margin: 0 3em 0 3em;
+	font-family: "Source Sans Pro", Helvetica, sans-serif;
+	font-size: 130%;
+}

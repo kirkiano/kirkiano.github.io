@@ -1,31 +1,40 @@
-<!doctype html>
+<!DOCTYPE HTML>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>Log Wrapper</title>
-  </head>
-  <body>
+	<head>
+		<title> - Log Wrapper</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<!-- See https://stackoverflow.com/a/28805427 regarding the importance of
+			    for proper layout inheritance. -->
+		<link rel="stylesheet" href="/assets/css/main.css" />
+		<noscript>
+			<link rel="stylesheet" href="/assets/css/noscript.css" />
+		</noscript>
+	</head>
+	<body class="is-preload" style="margin: 1em;">
     <nav>
   
     <a href="/" >
       Home
     </a>
+    &nbsp;
   
     <a href="/about.html" >
       About
     </a>
+    &nbsp;
   
     <a href="/blog.html" >
       Blog
     </a>
+    &nbsp;
   
 </nav>
     <h1>Log Wrapper</h1>
 <p>26 Sep 2023 - awest</p>
 
-<h1 id="log-wrapper">Log wrapper</h1>
-
-<p>You may have heard advice discouraging the inclusion of print statements in
+<div class="post-body">
+  <p>You may have heard advice discouraging the inclusion of print statements in
 functions that already do something else. It recalls the precept that pure code
 should live apart from code that has side-effects; Haskell, for example,
 enforces the segregation using its type system. Such rules are examples of the
@@ -170,5 +179,6 @@ case by good common sense.</p>
 
 <p>I hope this helps…and happy coding!</p>
 
-  </body>
+</div>
+	</body>
 </html>

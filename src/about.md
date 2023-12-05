@@ -2,6 +2,7 @@
 layout: default
 title: About
 ---
-# About page
 
-Software is my joy, and I would love to help you build some!
+# About
+
+Software is my joy. I would love to help you build it!

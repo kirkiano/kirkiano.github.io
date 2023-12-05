@@ -3,8 +3,6 @@ layout: post
 author: awest
 ---
 
-# Log wrapper
-
 You may have heard advice discouraging the inclusion of print statements in
 functions that already do something else. It recalls the precept that pure code
 should live apart from code that has side-effects; Haskell, for example,

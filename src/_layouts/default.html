@@ -1,11 +1,21 @@
-<!doctype html>
+---
+my_name: kirkiano
+---
+<!DOCTYPE HTML>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>{{ page.title }}</title>
-  </head>
-  <body>
+	<head>
+		<title>{{ page.my_name }} - {{ page.title }}</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<!-- See https://stackoverflow.com/a/28805427 regarding the importance of
+			   {{ site.baseurl }} for proper layout inheritance. -->
+		<link rel="stylesheet" href="{{ site.baseurl }}/assets/css/main.css" />
+		<noscript>
+			<link rel="stylesheet" href="{{ site.baseurl }}/assets/css/noscript.css" />
+		</noscript>
+	</head>
+	<body class="is-preload" style="margin: 1em;">
     {% include navigation.html %}
     {{ content }}
-  </body>
+	</body>
 </html>
