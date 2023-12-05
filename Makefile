@@ -8,29 +8,27 @@ JEKYLL_ARGS=-d ../docs
 	install_ruby \
 	install_rbenv \
 	build \
-	serve
+	serve \
+	dev
 
 
 build:
 	cd src; $(JEKYLL) build $(JEKYLL_ARGS)
 
-
-# For local development
 serve:
 	cd src; $(JEKYLL) serve $(JEKYLL_ARGS)
 
-
-# install: install_rbenv load_rbenv install_ruby install_gems
+# For local development
+dev:
+	cd src; $(JEKYLL) serve $(JEKYLL_ARGS) -w -l
 
 
 install_gems:
 	bundle install
 
-
 install_ruby:
 	rbenv install 3.2.2
 	rbenv local 3.2.2
-
 
 install_rbenv:
 	xcode-select --install || true
