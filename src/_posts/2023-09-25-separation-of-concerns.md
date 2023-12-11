@@ -1,7 +1,7 @@
 ---
 layout: post
 author: awest
-title: Separation of concerns
+my_name: kirkiano
 ---
 
 If we were pressed to boil software engineering down to one principle, or to

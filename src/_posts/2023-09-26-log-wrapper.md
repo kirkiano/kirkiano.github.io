@@ -1,6 +1,7 @@
 ---
 layout: post
 author: awest
+my_name: kirkiano
 ---
 
 You may have heard advice discouraging the inclusion of print statements in
