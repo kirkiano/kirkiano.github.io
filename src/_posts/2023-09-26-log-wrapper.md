@@ -8,9 +8,9 @@ You may have heard advice discouraging the inclusion of print statements in
 functions that already do something else. It recalls the precept that pure code
 should live apart from code that has side-effects; Haskell, for example,
 enforces the segregation using its type system. Such rules are examples of the
-more fundamental principle of [separation of
-concerns](separation_of_concerns.md), and in this article we show, in Rust, how
-it can ease the control of logging.
+more fundamental principle of
+[separation of concerns](../25/separation-of-concerns.html),
+and in this article we show, in Rust, how it can ease the control of logging.
 
 Suppose we have a class `C` of objects (*ie*, a `struct`) containing some
 method `f`.  Client code might then look like this:
